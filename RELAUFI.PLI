@@ -1,0 +1,815 @@
+*PROCESS OPT(TIME)  ;								
+ /* PROGRAMM >>>>>RELAUFI.PLI<<<<< */						
+ /**********************************************************************	
+ *										
+ * PROGRAMM >>>>>RELAUFI.PLI<<<<<						
+ *										
+ * VERSION VOM	12.9.85 							
+ *										
+ * BESCHREIBUNG IN RELAUFI.TXT							
+ *										
+ ***********************************************************************	
+ */										
+ RELAUFI:PROC  OPTIONS(MAIN) REORDER ;						
+   DCL FLAG_NIVEAU	  BIT (1) INIT ('0'B) STATIC ;				
+   DCL FLAG_MATRMAL	  BIT (1) INIT ('0'B) STATIC ;				
+   DCL KOPFTEXT 	  CHAR (80) ;						
+   DCL (T,D)		  CHAR (8) ;						
+   DCL NULLZUST (NNULL)   CHAR (12) ;						
+   DCL (NIGE,									
+	NIUN)(NUEBERGANG) CHAR (12) ;						
+   DCL NIV(NDIM)	  CHAR (4) ;						
+   DCL (ABST,DABST,GABST)							
+     (NUEBERGANG,NISOTOP) DEC FLOAT (16) ;					
+   DCL (NISOTOP,NNULL)	  BIN FIXED (15,0) INIT (10) STATIC ;			
+   DCL (NUEBERGANG,								
+	       NNIVEAU)   BIN FIXED (15,0) INIT (150) STATIC ;			
+   DCL (I1,I2,I3)	  BIN FIXED (15,0) INIT (1) STATIC ;			
+   DCL (IUE,IU,IG)	  BIN FIXED (15,0) INIT (1) STATIC ;			
+   DCL (NU,NG)		  BIN FIXED (15,0) INIT (150) STATIC ;			
+   DCL NDIM		  BIN FIXED (15,0) INIT (150) STATIC ;			
+   DCL (IGRUPPE,NNULLN)   BIN FIXED (15,0) INIT (1) STATIC ;			
+   DCL NIGR(NUEBERGANG)   BIN FIXED (15,0) ;					
+   DCL (IIG,IIU,INR)	  BIN FIXED (15,0) INIT (1) STATIC ;			
+   DCL NGRUPPE		  BIN FIXED (15,0) INIT (10) STATIC ;			
+   DCL GRUPPE(0:NGRUPPE)  BIN FIXED (15,0) INIT (1) ;				
+   DCL JUE(NUEBERGANG)	  BIN FIXED (15,0) ;					
+   DCL NR		  BIN FIXED (15,0) ;					
+   DCL IISOTOP		  BIN FIXED (15,0) ;					
+   DCL T1(100,0:100)	  DEC FLOAT (16) ;					
+   DCL (T2)(100,100)	  DEC FLOAT (16) ;					
+   DCL (T3,TINV)(100,100) DEC FLOAT (16) ;					
+   DCL IER		  BIN FIXED (15,0) ;					
+   DCL ERR(100) 	  DEC FLOAT (16) ;					
+   DCL (ERG1,ERG2)(100)   DEC FLOAT (16) ;					
+   DCL (N1,N2,N3)	  BIN FIXED (15,0) ;					
+   DCL (CHISQ,RMS)	  DEC FLOAT (16) ;					
+   DCL 1 KARTEGE (NG) , 							
+	 2 GNIVEAU	  DEC FLOAT (16) ,					
+	 2 GJ		  BIN FIXED (31,1) ,					
+	 2 GP		  BIT (1) ,						
+	 2 GZUSTAND	  CHAR (12) ;						
+   DCL 1 KARTEUN (NU) , 							
+	 2 UNIVEAU	  DEC FLOAT (16) ,					
+	 2 UJ		  BIN FIXED (31,1) ,					
+	 2 UP		  BIT (1) ,						
+	 2 UZUSTAND	  CHAR (12) ;						
+   DCL 1 UEB (NUEBERGANG) ,							
+	 2 GZU		  CHAR (4) ,						
+	 2 UZU		  CHAR (4) ,						
+	 2 IGR		  BIN FIXED (15,0) ;					
+   DCL (DATE,TIME,SQRT)   BUILTIN ;						
+   DCL (SUBSTR,ABS,SUM)   BUILTIN ;						
+   DCL SYSPRINT 	  FILE ;						
+   DCL SYSIN		  FILE ;						
+   DCL MATRMAL		  ENTRY ((*) CHAR (12),(*) BIN FIXED (31,1),		
+				 BIN FIXED (15,0), (*) CHAR (12),		
+				 (*) CHAR (12),(*) BIN FIXED (31,1),		
+				 BIN FIXED (15,0), (*) CHAR (12),		
+				 BIN FIXED (15,0),BIN FIXED (15,0),		
+				 (*) BIN FIXED(15,0))				
+				 EXTERNAL ;					
+   DCL MATRIX		  ENTRY (*,						
+				 (*,*) DEC FLOAT(16),				
+				 BIN FIXED(15,0),BIN FIXED(15,0),		
+				 BIN FIXED(15,0),(*) CHAR(4))			
+				 EXTERNAL ;					
+   DCL MATINV		  ENTRY ((*,*)	 DEC FLOAT (16),(*,*)			
+				 DEC FLOAT (16),BIN FIXED (15,0),		
+				 BIN FIXED (15,0))				
+				 EXTERNAL ;					
+   DCL MMAL2		  ENTRY ((*) CHAR(12),(*)CHAR(12),			
+				 BIN FIXED (15,0),(*)BIN FIXED (15,0),		
+				 BIN FIXED (15,0))				
+				 EXTERNAL ;					
+ /**********************************************************************	
+ *										
+ *    BEGINN DES PROGRAMMES RELAUFI						
+ *										
+ ***********************************************************************	
+ */										
+   PUT EDIT ('*****EINGABEWERTE*****')(X(55),A) ;				
+   T=SUBSTR(TIME,1,2)||':'||SUBSTR(TIME,3,2)||':'||SUBSTR(TIME,5,2) ;		
+   D=SUBSTR(DATE,5,2)||'/'||SUBSTR(DATE,3,2)||'/'||SUBSTR(DATE,1,2) ;		
+   GET COPY EDIT (KOPFTEXT)							
+		 (A(80)) ;							
+   PUT SKIP(2) EDIT (T,D)							
+		    (X(53),A(8),X(10),A(8)) ;					
+   PUT SKIP(2) ;								
+   GET SKIP COPY EDIT (NISOTOP,NNIVEAU,NUEBERGANG,NNULL,FLAG_MATRMAL)		
+		      (4 F(10,0),B(10)) ;					
+ /**********************************************************************	
+ *										
+ *    EINLESEN DER SPEKTRUMDATEN FUER NNIVEAU^=0				
+ *										
+ ***********************************************************************	
+ */										
+   IF NNIVEAU ^= 0 THEN 							
+   DO ; 									
+      FLAG_NIVEAU = '1'B ;							
+      DO I1=1 TO NNIVEAU ;							
+	 GET SKIP COPY EDIT (KARTEUN(IU))					
+			    (F(10,2),X(10),F(4,2),X(14),B(2),			
+						      A(12)) ;			
+	 IF UP(IU)='0'B THEN							
+	 DO ;									
+	    KARTEGE(IG) = KARTEUN(IU) ; 					
+	    IU = IU-1 ; 							
+	    IG = IG+1 ; 							
+	 END ;									
+	 IU = IU+1 ;								
+      END ;									
+      NU = IU-1 ;								
+      NG = IG-1 ;								
+   END ;									
+ /**********************************************************************	
+ *										
+ *    EINLESEN DER NNULL NULLZUSTAENDE NULLZUST 				
+ *										
+ ***********************************************************************	
+ */										
+   I2 = 1 ;									
+   DO I1 = 1 TO NNULL ; 							
+      GET SKIP COPY EDIT (NULLZUST(I2)) 					
+			 (A(12));						
+      IF FLAG_NIVEAU THEN							
+      DO ;									
+	 DO I3 = 1 TO NG ;							
+	    IF SUBSTR(NULLZUST(I2),9,4) = SUBSTR(GZUSTAND(I3),9,4)		
+						      THEN LEAVE ;		
+	 END ;									
+	 IF I3 = NG+1 THEN							
+	 DO ;									
+	    PUT SKIP EDIT ('*****FEHLER***** BEI DER EINGABE DER ',		
+			   'NULLZUSTAENDE : EINGEGEBENER ZUSTAND ',		
+			   ' DER NR ',I1,					
+			   ' NICHT IN DER SPEKTRUM-LISTE DER',			
+			   ' ZUSTAENDE GERADER PARITAET ENTHALTEN :',		
+			     NULLZUST(I2))					
+			  (A,A,A,F(5,0),SKIP,X(16),A,A,A) ;			
+	    I2 = I2-1 ; 							
+	 END ;									
+      END;									
+      I2 =I2+1 ;								
+   END ;									
+   NNULL = I2 - 1 ;								
+ /**********************************************************************	
+ *										
+ *    EINLESEN DER UEBERGAENGE							
+ *										
+ ***********************************************************************	
+ */										
+   DO I1 = 1 TO NUEBERGANG ;							
+      GET SKIP COPY EDIT (NIGE(I1),NIUN(I1))					
+			 (A(12),X(1),A(12)) ;					
+      GET SKIP COPY EDIT ((ABST(I1,I2) DO I2=1 TO NISOTOP))			
+			 ((NISOTOP) F(10,2)) ;					
+      GET SKIP COPY EDIT ((DABST(I1,I2) DO I2=1 TO NISOTOP))			
+			 ((NISOTOP) F(10,2)) ;					
+      GET SKIP COPY EDIT ((GABST(I1,I2) DO I2=1 TO NISOTOP))			
+			 ((NISOTOP) F(10,2)) ;					
+      DO I2=NISOTOP TO 1 BY -1 ;						
+	 ABST(I1,I2)=ABST(I1,I2)-ABST(I1,1) ;					
+      END ;									
+      IF FLAG_NIVEAU THEN							
+      DO ;									
+	 DO IU = 1 TO NU ;							
+	    IF SUBSTR(UZUSTAND(IU),9,4)=SUBSTR(NIUN(I1),9,4) THEN LEAVE;	
+	 END ;									
+	 DO IG = 1 TO NG ;							
+	    IF SUBSTR(GZUSTAND(IG),9,4)=SUBSTR(NIGE(I1),9,4) THEN LEAVE;	
+	 END ;									
+	 IF IU = NU+1 | IG = NG+1 THEN						
+	 PUT SKIP EDIT ('*****FEHLER***** BEIM EINLESEN DER LINIEN',		
+			'ISOTOPIEVERSCHIEBUNGEN :',				
+			' EINER DER BEIDEN ZUSTAENDE',				
+			' NICHT IN DER SPEKTRUM-LISTE. ')			
+		       (A,A,SKIP,X(16),A,A) ;					
+	 IF ABS(GJ(IG)-UJ(IU)) > 1 THEN 					
+	 PUT SKIP EDIT( '*****FEHLER***** BEIM EINLESEN DER LINIEN',		
+			'ISOTOPIEVERSCHIEBUNGEN : ',				
+			'DELTA J IST GROESSER ALS 1 ! ')			
+		      (A,A,A) ; 						
+      END;									
+   END ;									
+ /**********************************************************************	
+ *										
+ *    ANFANG DER BERECHNUNGEN							
+ *										
+ ***********************************************************************	
+ */										
+   PUT PAGE EDIT ('*****AUSGABEWERTE*****',KOPFTEXT,T,D)			
+		 (X(55),A,SKIP(2),X(26),A,SKIP,X(53),A,X(10),A) ;		
+   IF FLAG_MATRMAL & FLAG_NIVEAU THEN						
+   DO ; 									
+      PUT SKIP(2) EDIT ('MATRIX ALLER UEBERGAENGE',				
+			'MIT "*" GEMESSENE UEBERGAENGE',			
+			'MIT "." MOEGLICHE UEBERGAENGE')			
+			(X(10),A,SKIP,X(10),A,SKIP,X(10),A) ;			
+      CALL MATRMAL(NIUN,UJ,NU,UZUSTAND, 					
+		   NIGE,GJ,NG,GZUSTAND,NUEBERGANG,NDIM,NIGR) ;			
+      PUT SKIP EDIT ('HIER AUS DEM PROGRAMM MATRMAL HERAUS') (A) ;		
+   END; 									
+ /**********************************************************************	
+ *										
+ *    GRUPPENEINTEILUNG 							
+ *										
+ ***********************************************************************	
+ */										
+ /**********************************************************************	
+ *										
+ *    SUCHE NACH DEN NULLZUSTAENDEN DER GRUPPE IGRUPPE				
+ *										
+ ***********************************************************************	
+ */										
+   NNULLN=NNULL ;								
+ L010_NULL:									
+   IF NNULLN=0 | NNULL=0 THEN							
+   DO ; 									
+      IF FLAG_NIVEAU THEN							
+      DO ;									
+ L020_A:									
+	 DO IG=1 TO NG ;							
+	    DO IUE=1 TO NUEBERGANG ;						
+	    IF (SUBSTR(GZUSTAND(IG),9,4) = SUBSTR(NIGE(IUE),9,4) &		
+		  NIGR(IUE) = 0 ) THEN LEAVE L020_A ;				
+	    END ;								
+	 END;									
+	 IF IG=NG+1 & IUE=NUEBERGANG+1 THEN					
+	 DO ;									
+	    PUT SKIP EDIT ('***PUNKT1*** KEIN WEITERER NULLZUSTAND',		
+		'ZU FINDEN')(A,A) ;						
+	    GOTO L030_MMAL ;							
+	 END ;									
+      END ;									
+      ELSE									
+      DO ;									
+	 DO IUE=1 TO NUEBERGANG 						
+	 WHILE (NIGR(IUE) ^= 0) ;						
+	 END;									
+	 IF IUE=NUEBERGANG+1 THEN						
+	 DO ;									
+	    PUT SKIP EDIT ('***PUNKT2*** KEIN WEITERER NULLZUSTAND',		
+		' ZU FINDEN')(A,A) ;						
+	 GOTO L030_MMAL ;							
+	 END ;									
+      END ;									
+   END; 									
+   ELSE 									
+   DO ; 									
+      DO IUE=1 TO NUEBERGANG							
+      WHILE (SUBSTR(NULLZUST(NNULLN),9,4) ^= SUBSTR(NIGE(IUE),9,4) |		
+	     NIGR(IUE) ^= 0 ) ; 						
+      END ;									
+      NNULLN=NNULLN-1 ; 							
+      IF IUE = NUEBERGANG+1 THEN						
+      DO ;									
+	 PUT SKIP EDIT ('*****FEHLER***** ZUSTAND NULLZUST(',			
+			NNULLN+1,')=',NULLZUST(NNULLN+1),			
+			'                 NICHT UNTER DEN ',			
+			' ZUSTAENDEN GERADER PARITAET UNTER',			
+			' DEN UEBERGAENGEN ZU FINDEN.') 			
+		       (A,F(5,0),A,A,SKIP,A,A,A) ;				
+	 GOTO L010_NULL ;							
+      END ;									
+   END; 									
+   GZU(INR) = SUBSTR(NIGE(IUE),9,4) ;						
+   UZU(INR) = SUBSTR(NIUN(IUE),9,4) ;						
+   IGR(INR) = IGRUPPE ; 							
+   NIGR(IUE)= IGRUPPE ; 							
+   JUE(INR) = IUE ;								
+   IIG	    = INR-1 ;								
+   IIU	    = INR ;								
+   INR	    = INR+1 ;								
+ /**********************************************************************	
+ *										
+ *    SUCHE NACH DEN ZUSTAENDEN IN EINER GRUPPE 				
+ *										
+ ***********************************************************************	
+ */										
+   DO WHILE (IIU ^= IIG) ;							
+      DO I1=IIG+1 TO IIU ;							
+	 DO IUE=1 TO NUEBERGANG ;						
+	    IF SUBSTR(NIGE(IUE),9,4) = GZU(I1) &				
+	    NIGR(IUE) = 0 THEN							
+	    DO ;								
+	       GZU(INR) = SUBSTR(NIGE(IUE),9,4) ;				
+	       UZU(INR) = SUBSTR(NIUN(IUE),9,4) ;				
+	       IGR(INR) = IGRUPPE ;						
+	       NIGR(IUE)= IGRUPPE ;						
+	       JUE(INR) = IUE ; 						
+	       INR	= INR +1 ;						
+	    END ;								
+	 END ;									
+      END ;									
+      IIG=INR-1 ;								
+      IF IIU=GRUPPE(IGRUPPE-1) THEN IIU=GRUPPE(IGRUPPE-1)-1 ;			
+      DO I1=IIU+1 TO IIG ;							
+	 DO IUE=1 TO NUEBERGANG ;						
+	    IF SUBSTR(NIUN(IUE),9,4) = UZU(I1) &				
+	    NIGR(IUE) = 0 THEN							
+	    DO ;								
+	       GZU(INR) = SUBSTR(NIGE(IUE),9,4) ;				
+	       UZU(INR) = SUBSTR(NIUN(IUE),9,4) ;				
+	       IGR(INR) = IGRUPPE ;						
+	       NIGR(IUE)= IGRUPPE ;						
+	       JUE(INR) = IUE ; 						
+	       INR	= INR+1 ;						
+	    END ;								
+	 END ;									
+      END;									
+      IIU=INR-1 ;								
+   END; 									
+   GRUPPE(IGRUPPE)=INR ;							
+ /**********************************************************************	
+ *										
+ *    ERZEUGEN DER MATRIX, DIE PARAMETER UND MESSWERTE VERKNUEPFT		
+ *										
+ ***********************************************************************	
+ */										
+   PUT PAGE EDIT ('ERGEBNISMATRIX DER GRUPPE ',IGRUPPE,':')			
+		 (A,F(5,0),A) ; 						
+   PUT SKIP (5) ;								
+   N1=GRUPPE(IGRUPPE-1) ;							
+   N2=GRUPPE(IGRUPPE)-1 ;							
+   N3=N2-N1+1 ; 								
+   T1=0 ;									
+   CALL MATRIX (UEB,T1,N1,N2,NR,NIV) ;						
+   DO IISOTOP=2 TO NISOTOP ;							
+      T2,T3=0 ; 								
+      ERG1,ERG2=0 ;								
+      DO I1=N1 TO N2 ;								
+	 IF ABS(GABST(JUE(I1),1)) < 1E-5					
+	    THEN GABST(JUE(I1),1)=1 ;						
+	 IF ABS(DABST(JUE(I1),IISOTOP)) < 1E-5					
+	    THEN DABST(JUE(I1),IISOTOP)=1 ;					
+	 IF ABS(GABST(JUE(I1),IISOTOP)) < 1E-5					
+	    THEN GABST(JUE(I1),IISOTOP)=1 ;					
+	 ERR(I1-N1+1) = 1/((DABST(JUE(I1),1)/GABST(JUE(I1),1))**2+		
+			   (DABST(JUE(I1),IISOTOP)/				
+			    GABST(JUE(I1),IISOTOP))**2) ;			
+      END ;									
+      DO I1=1 TO NR  ;								
+	 DO I2=1 TO N3 ;							
+	    T2(I1,I2) =T1(I2,I1)*ERR(I2) ;					
+	 END ;									
+      END ;									
+      DO I1=1 TO NR ;								
+	 DO I2=1 TO NR ;							
+	    T3(I1,I2)=SUM(T2(I1,*)*T1(*,I2)) ;					
+	 END ;									
+      END ;									
+      CALL MATINV(T3,TINV,NR,IER);						
+      ERG1=0 ;									
+      DO I1=1 TO NR ;								
+	 DO I2=1 TO N3 ;							
+	    ERG1(I1)=T2(I1,I2)*ABST(JUE(I2+N1-1),IISOTOP)+ERG1(I1) ;		
+	 END ;									
+      END ;									
+      ERG2=0 ;									
+      DO I1=1 TO NR ;								
+	 DO I2=1 TO NR ;							
+	    ERG2(I1) = ERG2(I1)+TINV(I1,I2)*ERG1(I2) ;				
+	 END ;									
+      END ;									
+      RMS,CHISQ=0 ;								
+      ERG1=0 ;									
+      DO I1=1 TO N3 ;								
+	 DO I2=1 TO NR ;							
+	    ERG1(I1)=ERG1(I1)+T1(I1,I2)*ERG2(I2) ;				
+	 END ;									
+	 CHISQ=CHISQ+(ERG1(I1)-ABST(JUE(I1+N1-1),IISOTOP))**2*ERR(I1) ; 	
+      END ;									
+      IF N2-N1 >= NR THEN RMS=SQRT(CHISQ/(N3-NR)) ;				
+ /**********************************************************************	
+ *										
+ *    AUSGABE DER ERGEBNISSE							
+ *										
+ ***********************************************************************	
+ */										
+      PUT PAGE EDIT ('AUSGABEWERTE FUER GRUPPE',IGRUPPE,			
+		     '                  ISOTOP',IISOTOP)			
+		    (A,F(5,0),SKIP,A,F(5,0)) ;					
+      PUT SKIP EDIT (('-' DO I1=1 TO 120))(120 A) ;				
+      PUT SKIP EDIT (0,NIV(N1),' =>',0.0,'MHZ') 				
+		    (F(3,0),X(5),A,A,F(15,2),X(2),A) ;				
+      DO I1=1 TO NR ;								
+	 PUT SKIP EDIT (I1,NIV(I1+N1),' =>',ERG2(I1),'MHZ',			
+			SQRT(TINV(I1,I1))*RMS,'MHZ',				
+			SQRT(TINV(I1,I1)),'MHZ')				
+		       (F(3,0),X(5),A,A,F(15,2),X(2),				
+			A,X(5),F(15,2),X(2),A,X(5),F(15,2),X(2),A) ;		
+      END ;									
+      PUT SKIP EDIT (('-' DO I1=1 TO 120 ))(120 A) ;				
+      PUT SKIP (2) EDIT('CHISQ=',CHISQ,'RMS=',RMS,'FREIHEITSGRAD=',		
+			N3-NR)							
+		       (A,E(15,5),X(5),A,E(15,5),X(10),A,F(5,0)) ;		
+      PUT SKIP(5) EDIT (' NR',							
+			'FREQUENZ(MESS)      ', 				
+			'FREQUENZ(CALC)      ', 				
+			'RESIDUUM            ', 				
+			'PROZ ABW            ') 				
+			(A,X(11),A,A,A,A) ;					
+      PUT SKIP(2) ;								
+      DO I1=1 TO N3 ;								
+	 PUT SKIP EDIT (I1,ABST(JUE(I1+N1-1),IISOTOP),ERG1(I1), 		
+			ABST(JUE(I1+N1-1),IISOTOP)-ERG1(I1),			
+			NIGE(JUE(I1+N1-1)),'-',NIUN(JUE(I1+N1-1)))		
+			(F(3,0), 3 F(20,2),X(30),A,A,A) ;			
+	 IF ABS(ERG1(I1)) > 1E-5 THEN						
+	 PUT SKIP(0) EDIT ((ABST(JUE(I1+N1-1),IISOTOP)-ERG1(I1))/		
+			   ERG1(I1)*100.)					
+			   (X(60),E(20,5)) ;					
+      END ;									
+      PUT PAGE EDIT ('KOVARIANZMATRIX :')(A) ;					
+      PUT SKIP(2) EDIT ((I1 DO I1=1 TO NR ))					
+			((NR) F(15,0)) ;					
+      PUT SKIP(2) EDIT (((TINV(I1,I2)DO I2=1 TO NR)DO I1=1 TO NR))		
+			(SKIP(2),(NR) E(15,5)) ;				
+      PUT SKIP(5) EDIT ('KORRELATIONSMATRIX :')(A) ;				
+      DO I1=1 TO NR ;								
+	 DO I2=1 TO NR ;							
+	    IF TINV(I1,I1) < 1E-10 | TINV(I2,I2) < 1E-10 THEN LEAVE ;		
+	    T2(I1,I2) = TINV(I1,I2)/SQRT(TINV(I1,I1)*TINV(I2,I2)) ;		
+	 END ;									
+      END ;									
+      IF I1=NR+1 & I2=NR+1 THEN 						
+      DO ;									
+	 PUT SKIP(2) EDIT ((I1 DO I1=1 TO NR )) 				
+			   ((NR) F(6,0)) ;					
+	 PUT SKIP(2) EDIT (((T2(I1,I2)DO I2=1 TO NR)DO I1=1 TO NR))		
+			(SKIP(2),(NR) F(6,3)) ; 				
+      END ;									
+      ELSE									
+      PUT SKIP (2) EDIT (' KEIN AUSDRUCK DA DIVISION DURCH 0 ! ?')		
+			(A) ;							
+   END; 									
+   IGRUPPE = IGRUPPE +1 ;							
+   GOTO L010_NULL ;								
+ L030_MMAL :									
+   PUT PAGE EDIT('UEBERSICHT UEBER BERECHNETE UEBERGAENGE',			
+		 'DIE JEWEILIGEN ZAHLEN BEDEUTEN DIE GRUPPENNR')		
+		(X(40),A,SKIP,X(40),A) ;					
+   IF FLAG_NIVEAU THEN								
+   CALL MATRMAL(NIUN,UJ,NU,UZUSTAND,						
+		NIGE,GJ,NG,GZUSTAND,NUEBERGANG,NDIM,NIGR) ;			
+   ELSE 									
+   CALL MMAL2(NIUN,NIGE,NUEBERGANG,NIGR,NDIM) ; 				
+ END RELAUFI ;									
+*PROCESS OPT(TIME) ;								
+ /*    UNTERPROGRAMM  MATRMAL  */						
+ /**********************************************************************	
+ *										
+ *    UNTERPROGRAMM MATRMAL							
+ *										
+ * AUFGABE :									
+ * BRINGEN DER UEBERGAENGE IN EIN UEBERGANGSSCHEMA ZUR KONTROLLE UND		
+ * UEBERSICHT DRE EINGEGEBENEN UEBERGAENGE.					
+ *										
+ *										
+ ***********************************************************************	
+ */										
+ MATRMAL :PROC(NIUN,UJ,NU,UZUSTAND,						
+	       NIGE,GJ,NG,GZUSTAND,NUEBERGANG,NDIM,NIGR) ;			
+   DCL (NIGE,NIUN)(*)	  CHAR (12) ;						
+   DCL (GZUSTAND,								
+	 UZUSTAND)(*)	  CHAR (12) ;						
+   DCL B(NDIM+12,NDIM+12) CHAR (1) INIT (((NDIM+12)*(NDIM+12)) (' ')) ; 	
+   DCL B1(NDIM+12,NDIM+12)							
+			  CHAR (1) ;						
+   DCL ZUG1(NDIM)	  CHAR (12) ;						
+   DCL ZUU1(NDIM)	  CHAR (12) ;						
+   DCL ZUG2(NDIM,12)	  CHAR (1) DEF B(12+1SUB,2SUB) ;			
+   DCL ZUU2(NDIM,12)	  CHAR (1) DEF B(2SUB,12+1SUB) ;			
+   DCL ZUG3(NDIM,12)	  CHAR (1) DEF ZUG1 ;					
+   DCL ZUU3(NDIM,12)	  CHAR (1) DEF ZUU1 ;					
+   DCL HILF		  CHAR (20) INIT('*123456789ABCDEFGHIJ') STATIC;	
+   DCL NIGR(*)		  BIN FIXED (15,0) ;					
+   DCL (UJ,GJ)(*)	  BIN FIXED (31,1) ;					
+   DCL (NG,NU,NUEBERGANG) BIN FIXED (15,0) ;					
+   DCL (IG,IU,IUE)	  BIN FIXED (15,0) ;					
+   DCL NDIM		  BIN FIXED (15,0) ;					
+   DCL (SUBSTR,ABS)	  BUILTIN ;						
+   DCL SYSPRINT 	  FILE ;						
+   ZUG1 = GZUSTAND ;								
+   ZUU1 = UZUSTAND ;								
+   ZUG2 = ZUG3 ;								
+   ZUU2 = ZUU3 ;								
+   DO IG = 1 TO NG ;								
+      DO IU = 1 TO NU ; 							
+	 IF ABS(UJ(IU)-GJ(IG)) < 2. THEN					
+	 B(12+IG,12+IU)='.' ;							
+	 DO IUE = 1 TO NUEBERGANG ;						
+	    IF SUBSTR(NIGE(IUE),9,4) = SUBSTR(GZUSTAND(IG),9,4) &		
+	       SUBSTR(NIUN(IUE),9,4) = SUBSTR(UZUSTAND(IU),9,4) THEN		
+	       B(12+IG,12+IU) = SUBSTR(HILF,NIGR(IUE)+1,1) ;			
+	 END ;									
+      END ;									
+   END ;									
+   B1=B ;									
+   PUT SKIP(5) EDIT (((B1(IG,IU) DO IU = 1 TO NU+12)DO IG =1 TO NG+12)) 	
+		    ((NU+12) A(1),SKIP) ;					
+   PUT SKIP EDIT ('BEENDEN VON MATRMAL')(A);					
+ END MATRMAL ;									
+*PROCESS OPT(TIME) ;								
+ /*    UNTERPROGRAMM MATRIX  */ 						
+ /**********************************************************************	
+ *										
+ *    UNTERPROGRAMM MATRIX							
+ * AUFGABE DES UNTERPROGRAMMS : 						
+ * AUFSTELLEN DER PROBLEMMATRIX T, DIMENSION: (N1-N2+1)ZEILEN X (0:NR)SP	
+ * SUCHE DER PARAMETER, DIE ZU FITTEN SIND. VEKTOR,  DER DIE  NAMEN		
+ * DER PARAMETER ENTHAELT : NIV( ) DIMENSION NR.				
+ *										
+ ***********************************************************************	
+ */										
+ MATRIX :PROC(UEB,T,N1,N2,NR,NIV) ;						
+   DCL T(*,*)		   DEC FLOAT (16) ;					
+   DCL FUE(150,2)	   BIN FIXED (15,0) ;					
+   DCL (N1,N2,NR)	   BIN FIXED (15,0) ;					
+   DCL (I1,I2)		   BIN FIXED (15,0) ;					
+   DCL 1 UEB (*) ,								
+	 2 GZU		   CHAR (4) ,						
+	 2 UZU		   CHAR (4) ,						
+	 2 IGR		   BIN FIXED (15,0) ;					
+   DCL NIV(*)		   CHAR (4) ;						
+   FUE(N1,1)  = 1 ;								
+   NR	      = 2 ;								
+   NIV(N1)    = GZU(N1) ;							
+   DO I1=N1+1 TO N2 ;								
+      DO I2=N1 TO I1-1 ;							
+	 IF GZU(I2) = GZU(I1) THEN LEAVE ;					
+      END ;									
+      IF I2=I1 THEN								
+      DO ;									
+	 FUE(I1,1)   = NR ;							
+	 NIV(NR+N1-1)= GZU(I1) ;						
+	 NR	     = NR+1 ;							
+      END ;									
+      ELSE FUE(I1,1) = FUE(I2,1) ;						
+   END; 									
+   FUE (N1,2)  = NR ;								
+   NIV(NR+N1-1)= UZU(N1) ;							
+   NR	       = NR+1 ; 							
+   DO I1=N1+1 TO N2 ;								
+      DO I2=N1 TO I1-1 ;							
+	 IF UZU(I2) = UZU(I1) THEN LEAVE ;					
+      END ;									
+      IF I2=I1 THEN								
+      DO ;									
+	 FUE(I1,2)   = NR ;							
+	 NIV(NR+N1-1)= UZU(I1) ;						
+	 NR	     = NR+1 ;							
+      END ;									
+      ELSE FUE(I1,2) = FUE(I2,2) ;						
+   END; 									
+   T=0 ;									
+   DO I2=1 TO N2-N1+1 ; 							
+      T(I2,FUE(I2+N1-1,1)-1)= -1 ;						
+      T(I2,FUE(I2+N1-1,2)-1)=  1 ;						
+   END ;									
+   NR=NR-2 ;									
+   PUT SKIP EDIT ('DESIGNMATRIX DER GRUPPE :')(A) ;				
+   PUT SKIP(2) EDIT ((FUE(I2+N1-1,1),FUE(I2+N1-1,2),				
+		    (T(I2,I1)  DO I1=0 TO NR )					
+			     DO I2=1 TO N2-N1+1))				
+		    (F(3,0),X(3),F(3,0),X(10),					
+		    (NR+1) F(3,0),SKIP) ;					
+ PUT SKIP(10) ; 								
+ END MATRIX ;									
+*PROCESS OPT(TIME) ;								
+ /*	  UNTERPROGRAMM MATINV	    */						
+ /**********************************************************************	
+ *										
+ *    UNTERPROGRAMM MATINV							
+ *										
+ *										
+ * UNTERPROGRAMM ZUR MATRIXINVERSION EINER DIM - DIMENSINALEN			
+ * MATRIX T . AUSGABE : INVERSE TINV UND FEHLERMELDUNGEN			
+ * IER :									
+ *    =0   : KEIN FEHLER							
+ *    =1   : ZEILENSUMME WEICHT UM MEHR ALS 1 E-10 VON 1 AB			
+ *    =2   : DETERMINANTE IST 0 						
+ *										
+ *										
+ ***********************************************************************	
+ */										
+ MATINV :PROC (T,TINV,DIM,IER) ;						
+   DCL (T,TINV)(*,*)	 DEC FLOAT (16) ;					
+   DCL THILFS(DIM,DIM+1) DEC FLOAT (16) ;					
+   DCL (D(DIM,2),HA,MA)  DEC FLOAT (16) ;					
+   DCL (I(DIM),J(DIM))	 BIN FIXED (15,0) ;					
+   DCL (L(DIM)) 	 BIN FIXED (15,0) ;					
+   DCL (I1,I2,I3,I4,K1)  BIN FIXED (15,0) ;					
+   DCL (K2,IER,DIM)	 BIN FIXED (15,0) ;					
+   DCL (SUM,ABS)	 BUILTIN ;						
+   DCL (SYSPRINT)	 FILE ; 						
+   PUT SKIP EDIT ('UNTERPROGRAMM MATINV')(A) ;					
+   THILFS=0 ;									
+   DO I2 = 1 TO DIM ;								
+      DO I1 = 1 TO DIM ;							
+	 THILFS(I1,I2)	= T(I1,I2) ;						
+      END ;									
+      THILFS(I2,DIM+1) = 1-SUM(T(I2,*)) ;					
+   END ;									
+   DO I4 = 1 TO DIM ;								
+ /**********************************************************************	
+ *										
+ *    SUCHE NACH PIVOTELEMENT FUER JEDES I4					
+ *										
+ ***********************************************************************	
+ */										
+      MA=0 ;									
+      DO I1 =1 TO DIM ; 							
+	 DO I2 = 1 TO DIM ;							
+	    DO I3 = 1 TO I4-1 WHILE (I4^=1) ;					
+		IF D(I3,1)=I1 THEN GOTO L_A ;					
+		IF D(I3,2)=I2 THEN GOTO L_B ;					
+	    END ;								
+	    IF MA > ABS(THILFS(I1,I2)) THEN GOTO L_B ;				
+	    MA=ABS(THILFS(I1,I2)) ;						
+	    D(I4,1)=I1 ;							
+	    D(I4,2)=I2 ;							
+	    I(I1)  =I2 ;							
+	    J(I2)  =I1 ;							
+	    L(I2)  =I1 ;							
+ L_B :										
+	 END;									
+ L_A :										
+      END;									
+ /**********************************************************************	
+ *										
+ *    EIGENTLICHE MATRIXINVERSION						
+ *										
+ ***********************************************************************	
+ */										
+      K1=D(I4,1) ;								
+      K2=D(I4,2) ;								
+      PUT SKIP EDIT ('DAS PIVOTELEMENT DER I4=',I4,'-TEN ITERATION',		
+		     'LAUTET : THILFS(',K1,',',K2,')=',THILFS(K1,K2))		
+		     (A,F(5,0),A,A,F(5,0),A,F(5,0),A,E(15,5)) ; 		
+      IF ABS(THILFS(K1,K2)) <= 1E-10 THEN					
+      DO ;									
+	 IER = 2 ;								
+	 PUT EDIT (' *****FEHLER*****IM UNTERPROGRAMM MATINV:', 		
+		   ' DETERMINANTE NAHE 0 ; IER=2 ;',				
+		   ' FEHLER AUFGETRETEN BEI I4=',I4,				
+		   '                        K1=',K1,				
+		   '                        K2=',K2,				
+		   '             THILFS(K1,K2)=',THILFS(K1,K2)) 		
+		  (SKIP,A,SKIP,A,SKIP,A,F(5,0),SKIP,A,F(5,0),SKIP,		
+		   A,F(5,0),A,F(10,5)) ;					
+	 RETURN ;								
+      END ;									
+      DO I1 = 1 TO K1-1,K1+1 TO DIM ;						
+	 HA= THILFS(I1,K2)/THILFS(K1,K2) ;					
+	 DO I2 = 1 TO K2-1 , K2+1 TO DIM+1 ;					
+	    THILFS(I1,I2) = THILFS(I1,I2)-HA*THILFS(K1,I2) ;			
+	 END ;									
+	 THILFS(I1,K2)=THILFS(I1,K2)/THILFS(K1,K2) ;				
+      END ;									
+      DO I2=1 TO K2-1, K2+1 TO DIM+1 ;						
+	 THILFS(K1,I2)=-THILFS(K1,I2)/THILFS(K1,K2) ;				
+      END ;									
+      THILFS(K1,K2) = 1/THILFS(K1,K2) ; 					
+   END ;									
+ /**********************************************************************	
+ *										
+ *    ZURUECKORDNEN DER SPALTEN UND ZEILEN					
+ *										
+ ***********************************************************************	
+ */										
+   DO I1 = 1 TO DIM-1 ; 							
+      DO I2 =1 TO DIM+1 ;							
+	 HA		 = THILFS(J(I1),I2) ;					
+	 THILFS(J(I1),I2)= THILFS(I1,I2) ;					
+	 THILFS(I1,I2)	 = HA ; 						
+	 J(I(I1))	 = J(I1) ;						
+      END ;									
+   END ;									
+   DO I1 = 1 TO DIM-1 ; 							
+      DO I2 =1 TO DIM ; 							
+	 HA		 = THILFS(I2,I(I1)) ;					
+	 THILFS(I2,I(I1))= THILFS(I2,I1) ;					
+	 THILFS(I2,I1)	 = HA ; 						
+	 I(L(I1))	 = I(I1) ;						
+      END ;									
+   END ;									
+ /**********************************************************************	
+ *										
+ *    ABSPEICHERN DES ERGEBNISSES IN TINV					
+ *										
+ ***********************************************************************	
+ */										
+   DO I2 = 1 TO DIM ;								
+      DO I1 = 1 TO DIM ;							
+	 TINV(I1,I2) = THILFS(I1,I2) ;						
+      END ;									
+      THILFS(I2,DIM+1)=ABS(1-ABS(SUM(THILFS(I2,*)))) ;				
+      IF THILFS(I2,DIM+1) > 1E-05 THEN IER=1 ;					
+   END ;									
+   IF IER = 1 THEN								
+   DO ; 									
+      PUT EDIT ('*****FEHLER***** IM UNTERPROGRAMM MATINV:',			
+		' ZEILENSUMME UM MEHR ALS 1E-5 VON 1 VERSCHIEDEN',		
+		'  IER=1  ')							
+	       (A,SKIP,A,SKIP,A,A) ;						
+      PUT EDIT (' ZEILENSUMMEN SIND:',THILFS(*,DIM+1))				
+	       (SKIP,A,500  F(10,5)) ;						
+      DO I1 = 1 TO DIM ;							
+	 DO I2 = 1 TO DIM ;							
+	    THILFS(I1,I2)=SUM(TINV(I1,*)*T(*,I2)) ;				
+	 END ;									
+      END ;									
+      PUT SKIP EDIT (' PRODUKTMATRIX VON T UND TINV IST:')(A) ; 		
+      PUT SKIP EDIT (((THILFS(I1,I2)DO I1=1 TO DIM+1)DO I2=1 TO DIM ))		
+		    ((DIM+1) (F(6,0)),SKIP ) ;					
+   END ;									
+      PUT SKIP EDIT (' ZEILENSUMMEN SIND:',THILFS(*,DIM+1))			
+		    (SKIP,A,500  E(15,5)) ;					
+      DO I1 = 1 TO DIM ;							
+	 DO I2 = 1 TO DIM ;							
+	    THILFS(I1,I2)=SUM(TINV(I1,*)*T(*,I2)) ;				
+	 END ;									
+      END ;									
+  /*  PUT SKIP EDIT (' PRODUKTMATRIX VON T UND TINV IST:')(A) ; 		
+      PUT SKIP EDIT (((THILFS(I1,I2)DO I1=1 TO DIM+1)DO I2=1 TO DIM ))		
+		    ((DIM+1) (E(15,5)),SKIP ) ; 				
+      PUT SKIP EDIT (' INVERSE MATRIX  TINV IST:')(A) ; 			
+      PUT SKIP EDIT (((TINV(I1,I2)DO I1=1 TO DIM)DO I2=1 TO DIM ))		
+		((DIM) (E(15,5)),SKIP ) ;					
+  */										
+ END MATINV ;									
+*PROCESS OPT(TIME) ;								
+ /*	  UNTERPROGRAMM   MMAL2     */						
+ /**********************************************************************	
+ *										
+ *    UNTERPROGRAMM MMAL2							
+ *										
+ *    AUFGABE DES UNTERPROGRAMMS :						
+ * MALEN DES UEBERGANGSSCHEMA, FALLS KEINE SPEKTRUMKARTEN EINGEGEBEN		
+ * WURDEN (NNIVEAU = 0) . ANORDNUNG DER ZUSTAENDE NACH EINGABE DER		
+ * UEBERGAENGE. 								
+ *										
+ ***********************************************************************	
+ */										
+ MMAL2 :PROC (NIUN,NIGE,NUE,NIGR,NDIM) ;					
+   DCL (NIGE,NIUN)(*)	    CHAR (12) ; 					
+   DCL B(NDIM+12,NDIM+12)   CHAR (1) INIT (((NDIM+12)*(NDIM+12)) ' ');		
+   DCL B1(NDIM+12,NDIM+12)  CHAR (1) ;						
+   DCL (NIG1,NIU1)(NDIM)    CHAR (12) ; 					
+   DCL NIG2(NDIM,12)	    CHAR (1) DEF (B(12+1SUB,2SUB)) ;			
+   DCL NIU2(NDIM,12)	    CHAR (1) DEF (B(2SUB,12+1SUB)) ;			
+   DCL NIG3(NDIM,12)	    CHAR (1) DEF NIG1 ; 				
+   DCL NIU3(NDIM,12)	    CHAR (1) DEF NIU1 ; 				
+   DCL HILF		    CHAR (20) INIT ('*123456789ABCDEFGHIK')		
+			    STATIC ;						
+   DCL NIGR(*)		    BIN FIXED (15,0) ;					
+   DCL (NUE,IUE,NDIM)	    BIN FIXED (15,0) ;					
+   DCL FUE(100,2)	    BIN FIXED (15,0) ;					
+   DCL (I1,I2,NU1,NG1)	    BIN FIXED (15,0) ;					
+   DCL (SUBSTR,ABS)	    BUILTIN ;						
+   DCL SYSPRINT 	    FILE ;						
+   FUE(1,1)= 1 ;								
+   NIG1(1) = NIGE(1) ;								
+   NG1	   = 2 ;								
+   DO I1=2 TO NUE ;								
+      DO I2=1 TO I1-1 ; 							
+	 IF NIGE(I2) = NIGE(I1) THEN LEAVE ;					
+      END ;									
+      IF I2=I1 THEN								
+      DO ;									
+	 FUE(I1,1)   = NG1 ;							
+	 NIG1(NG1)   = NIGE(I1) ;						
+	 NG1	     = NG1+1 ;							
+      END ;									
+      ELSE FUE(I1,1) = FUE(I2,1) ;						
+   END; 									
+   FUE (1,2)  = 1 ;								
+   NIU1(1)    = NIUN(1) ;							
+   NU1=2 ;									
+   DO I1=2 TO NUE ;								
+      DO I2=1 TO I1-1 ; 							
+	 IF NIUN(I2) = NIUN(I1) THEN LEAVE ;					
+      END ;									
+      IF I2=I1 THEN								
+      DO ;									
+	 FUE(I1,2)   = NU1 ;							
+	 NIU1(NU1)   = NIUN(I1) ;						
+	 NU1	     = NU1+1 ;							
+      END ;									
+      ELSE FUE(I1,2) = FUE(I2,2) ;						
+   END; 									
+   NIG2=NIG3 ;									
+   NIU2=NIU3 ;									
+   DO I1=1 TO NUE ;								
+      B(FUE(I1,1)+12,FUE(I1,2)+12)=SUBSTR(HILF,NIGR(I1)+1,1) ;			
+   END ;									
+   B1=B ;									
+   PUT SKIP (5) EDIT (((B1(I1,I2)DO I2=1 TO 12+NU1)				
+				 DO I1=1 TO 12+NG1))				
+		      ((NU1+12) A(1),SKIP) ;					
+ END MMAL2 ;									
+ (((B1(I1,I2)DO I2=1 TO 12+NU1)				
+				 DO I1=1 TO 12+NG1))				
+		      ((NU1+12) A(1),SKIP) ;					
