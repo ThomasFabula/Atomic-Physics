@@ -385,6 +385,5 @@ C
   700 WRITE(6,701) IER								
   701 FORMAT(1H0,'FEHLER',I4,'  NEUNJ') 					
   900 RETURN									
-      END									
-			
+      END											
   700 WRITE(6,701) IER
