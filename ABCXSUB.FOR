@@ -208,7 +208,6 @@ C
   650 WRITE(6,651) IER								
   651 FORMAT(1H0,'FEHLER',I4,'  NEUNJ') 					
   600 RETURN									
-      END									
-			
+      END												
   650 WRITE(6,651) IER								
   651 FORMAT(1H0,'FEHLER',I4,' 
