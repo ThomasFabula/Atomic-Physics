@@ -1,7 +1,7 @@
 C										
 C										
 C     PROGRAMM	 A B C X F A K							
-C		 =============							
+C		       =============							
 C										
 C										
 C     BERECHNUNG DER A-,B- UND C-FAKTOREN ALS LINEARKOMBINATION DER		
@@ -505,6 +505,5 @@ C
    23 CONTINUE									
       GO TO 1001								
   999 STOP									
-      END									
-)							
+      END																
    24 CONTINUE					
