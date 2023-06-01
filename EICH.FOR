@@ -5,11 +5,11 @@ C
 C *** PROGRAMM ZUR AUSWERTUNG VON SCHREIBERAUFNAHMEN                            
 C                                                                               
 C                                                                               
-C DAS PROGRAMM BERECHNET  AUS DEN POSITIONEN DER EICHMARKEN EINE                
+C DAS PROGRAMM BERECHNET AUS DEN POSITIONEN DER EICHMARKEN EINE                
 C SPLINEFUNKTION UND BERECHNET ANSCHLIESSEND DIE FREQUENZEN DER                 
 C EINGEGEBENEN LINIEN.DABEI SIND DIE POSITIONEN DER EICHMARKEN BZW.             
-C DER LINIEN IN ZENTIMETER ANZUGEBEN , DA DAS PROGRAMM EINEN ABLESE-            
-C FEHLER VON EINEM MILLIMETER ANNIMT.                                           
+C DER LINIEN IN ZENTIMETER ANZUGEBEN, DA DAS PROGRAMM EINEN ABLESE-            
+C FEHLER VON EINEM MILLIMETER ANNIMMT.                                           
 C                                                                               
 C EINGABE FORMATE                                                               
 C                                                                               
@@ -156,4 +156,4 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 2300  CONTINUE                                                                  
       STOP                                                                      
       END                                                                       
-                                                                                                   
+      
