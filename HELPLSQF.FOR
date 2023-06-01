@@ -72,4 +72,3 @@ C
       GO TO 1									
    10 STOP									
       END									
-AT('0HFS-KONSTANTE  ',A1,'  EXISTIERT NICHT IM 
