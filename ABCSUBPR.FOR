@@ -202,4 +202,4 @@ C
   651 FORMAT(1H0,'FEHLER',I4,'  NEUNJ')                                         
   600 RETURN                                                                    
       END                                                                       
-                                       
+      
