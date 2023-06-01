@@ -62,7 +62,7 @@ C                                                 DISTANT
 C              29-32     I4      KPLT      LEER: KEIN PLOT GEWUENSCHT           
 C                                          =1 :  PLOT DER MESSWERTE U. DER KURVE
 C                                          =2 :  PLOT OHNE FEHLERBALKEN (ANGABE 
-C                                                NUR NORWENDIG, WENN BEIM FIT   
+C                                                NUR NOTWENDIG, WENN BEIM FIT   
 C                                                ZAEHLRATENFEHLER VERWENDET)    
 C                                          =3 :  PLOT OHNE UEBERSCHRIFTENTEXT   
 C                                          >3 :  WIE KPLOT=3 , ABER MESSWERT- U.
@@ -172,4 +172,4 @@ C     ES WERDEN EINGABEDATEN FUER DAS PROGRAMM  'HFSFIT'  AUF KARTEN GESTANZT
 C     (1 KARTE PRO TEILKURVE) : MITTENFREQUENZ MIT FEHLER, F(OBEN) , F(UNTEN) , 
 C                               TEILKURVENBEZEICHNUNG                           
 C                                                                               
-                                                                   
+                                                                
