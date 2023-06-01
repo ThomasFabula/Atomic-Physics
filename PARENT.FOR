@@ -134,4 +134,4 @@ C     COEFFICIENTS OF FRACTIONAL PARENTAGE
   820 FORMAT(1H0,'FEHLER',I2,'BEIM 6-J-SYMBOL',6D12.3)                          
   810 RETURN                                                                    
       END                                                                       
-                                                                                                               
+                                                                                                              
