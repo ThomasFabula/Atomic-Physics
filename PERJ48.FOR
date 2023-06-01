@@ -471,5 +471,3 @@ C
      1')  IST IM DATENSATZ NICHT ENTHALTEN')					
  4000 STOP									
       END									
-CHTER BRA-ZUSTAND  (',I2,',',I2,	
-     1')  IST IM DATENS
