@@ -662,4 +662,3 @@ C
  41   FU(K)=YFU(J(K))								
       RETURN									
       END									
-=A
