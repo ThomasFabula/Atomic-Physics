@@ -4,9 +4,10 @@
 - https://www.uni-bonn.de/de
 - https://www.iap.uni-bonn.de/de
  
-## Languages 
+## Programming languages 
 - FORTRAN 
-- PASCAL 
+- PASCAL
+- PL I 
 
-## HfS
+## HfS spectroscopy
 - Hyperfine-structure (Hfs) analyses and data fitting 
