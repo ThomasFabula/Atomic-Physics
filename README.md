@@ -7,7 +7,7 @@
 ## Programming languages 
 - FORTRAN 
 - PASCAL
-- PL I 
+- PL I https://en.wikipedia.org/wiki/PL/I
 
 ## HfS spectroscopy
 - Hyperfine-structure (Hfs) analyses and data fitting 
