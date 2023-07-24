@@ -1,6 +1,6 @@
 PROGRAM SPEKTRUM(INPUT,OUTPUT,INDATA) ;
 (* ********************************************************************)
-(* PROGRAMM ZUR  BERECHNUNG DER ERLAUBTEN DIPOLUEBERGAENGE. DIE HIERZU*)
+(* PROGRAMM ZUR BERECHNUNG DER ERLAUBTEN DIPOLUEBERGAENGE. DIE HIERZU *)
 (* BENUTZTEN AUSWAHLREGELN LAUTEN :                                   *)
 (*                                                                    *)
 (*                     DJ <= 1 AUSSER J=0 -> J=0                      *)
@@ -21,7 +21,7 @@ PROGRAM SPEKTRUM(INPUT,OUTPUT,INDATA) ;
 (* 42 - 50         A          CIN            BEZEICHNUNG DES ZUSTANDES*)
 (*                                                                    *)
 (* WEITERE KARTEN DES TYPES 2 .                                       *)
-(* DIE PARITAETEN DER ZUSTAENDE KOENNEN INNERHALB DER EINGABEDATEN BEL*)
+(* DIE PARITAETEN DER ZUSTAENDE KOENNEN INNERHALB DER EINGABEDATEN    *)
 (* BELIEBIG GEMISCHT WERDEN                                           *)
 (*                                                                    *)
 (* ********************************************************************)
@@ -81,8 +81,8 @@ END ;
  
  
 (* -------------------------------------------------------------------*)
-(* UNTERPROGRAMM ZUR BESTIMMUNG VON ERLAUBTEN UND NICHT ERLAUBTEN UEBE*)
-(* GAENGEN                                                            *)
+(* UNTERPROGRAMM ZUR BESTIMMUNG VON ERLAUBTEN UND NICHT ERLAUBTEN     *)
+(* UEBERGAENGEN                                                       *)
 (* -------------------------------------------------------------------*)
  
 FUNCTION AUSWAHL( VAR J,JJ : REAL ) : BOOLEAN ;
