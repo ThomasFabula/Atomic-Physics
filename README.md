@@ -1,10 +1,12 @@
 # Atomic-Physics
 
-## Univ of Bonn
-
+## University of Bonn
+- https://www.uni-bonn.de/de
+- https://www.iap.uni-bonn.de/de
+ 
 ## Languages 
-- FORTRAN and
-- PASCAL programs
+- FORTRAN 
+- PASCAL 
 
 ## HfS
 - Hyperfine-structure (Hfs) analyses and data fitting 
