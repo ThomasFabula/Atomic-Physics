@@ -213,4 +213,4 @@ C   UNGERADE PARITAET
    50 FORMAT(1H0,'ENDE')                                                        
       STOP                                                                      
       END                                                                       
-                                 
+                              
