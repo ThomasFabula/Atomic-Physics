@@ -4,7 +4,7 @@
  *										
  * PROGRAMM >>>>>RELAUFI.PLI<<<<<						
  *										
- * VERSION VOM	12.9.85 							
+ * VERSION VOM	12.09.1985 							
  *										
  * BESCHREIBUNG IN RELAUFI.TXT							
  *										
@@ -812,4 +812,4 @@
  END MMAL2 ;									
  (((B1(I1,I2)DO I2=1 TO 12+NU1)				
 				 DO I1=1 TO 12+NG1))				
-		      ((NU1+12) A(1),SKIP) ;					
+		      ((NU1+12) A(1),SKIP) ;					
