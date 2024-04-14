@@ -291,4 +291,4 @@ BEGIN
      COUNT(WEVEN,JEVEN,CEVEN,IEVEN,WODD,JODD,CODD,IODD,LMIN,LMAX,ELIM,
            KOPF,NT,INT,COM) ;
 END .
-                                       
+                                     
