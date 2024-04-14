@@ -287,4 +287,4 @@ C
    30 FORMAT(' ENDE')                                                           
       STOP                                                                      
       END                                                                       
-                                                                                                             
+                                                                                                          
