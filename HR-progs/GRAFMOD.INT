@@ -1,0 +1,231 @@
+INTERFACE ;
+
+UNIT grafmod ( replace,overwrite,invert,erase,ibmcard,herkules,nografik,
+               black,white,textmode,page0,page1,
+               window_type,windowpar_type,real_vektor,set_of_byte,
+               beep,get_key,plot,draw_line,define_window,query_window,
+               set_window,move_cursor,init_cursor,del_cursor,
+               center_cursor,query_cursor,cursor,set_defaults,query_defaults,
+               init_grafik,scalexy,xbild,ybild,bild_koordinaten,xuser,yuser,
+               user_koordinaten,draw_box,grafik_text,clear_window,
+               clear_gscreen,axis,user_plot,user_lineto,user_moveto,user_line,
+               plot_vektor) ;
+
+CONST replace        =   0 ;
+      overwrite      =   1 ;
+      invert         =   2 ;
+      erase          =   3 ;
+      ibmcard        =   2 ;
+      herkules       =   8 ;
+      nografik       =   0 ;
+      black          =   0 ;
+      white          =   1 ;
+      textmode       =   0 ;
+      page0          = 256 ;
+      page1          = 257 ;
+
+TYPE window_type    = ARRAY [1..2,1..2] OF INTEGER ;
+     windowpar_type = ARRAY [1..4] OF REAL8 ;
+     real_vektor    = SUPER ARRAY [1..*] OF REAL8 ;
+     set_of_byte    = SET OF BYTE ;
+
+(*------------------------------------------------------------------*)
+(*   BEEP   Piepst einmal kurz                                      *)
+(*------------------------------------------------------------------*)
+PROCEDURE beep ;
+
+(*------------------------------------------------------------------*)
+(* GET_KEY wartet auf ein Zeichen der Standard Eingabedatei und gibt*)
+(* dieses IN TASTE aus. Die Funktion erhält den Wert FALSE wenn es  *)
+(* sich um ein übliches ASCII Code handelt und den Wert TRUE bei    *)
+(* Übergabe eines Funktions - Codes .                               *)
+(*------------------------------------------------------------------*)
+FUNCTION get_key ( VAR taste : BYTE ) : BOOLEAN ;
+
+(*------------------------------------------------------------------*)
+(* PLOT zeichnet einen Punkt IN Bildschirm - Koordinaten bei (x,y)  *)
+(*------------------------------------------------------------------*)
+PROCEDURE plot ( x,y : INTEGER ) ;
+
+(*------------------------------------------------------------------*)
+(* DRAW_LINE zeichnet eine Linie IN Bildschirm - Koordinaten von    *)
+(* (x1,y1) nach (x2,y2) .                                           *)
+(*------------------------------------------------------------------*)
+PROCEDURE draw_line ( x1,y1,x2,y2 : INTEGER ) ;
+
+(*-------------------------------------------------------------------*)
+(*  Definition des   aktiven Bildschirm Fensters mit den Eck-        *)
+(*  Punkten (x1,y1),(x2,y2) . Die Skalierungsfaktoren werden         *)
+(*  zurckgesetzt.( Bild -  gleich Userkoordinaten )                 *)
+(*-------------------------------------------------------------------*)
+PROCEDURE define_window( x1,y1,x2,y2 : INTEGER ) ;
+
+(*-------------------------------------------------------------------*)
+(* Löschen des aktuellen Fensters mit dem durch FILLTYPE gegeben     *)
+(* Wert . ( siehe Beschreibung zu FILLSTYLE )                        *)
+(*-------------------------------------------------------------------*)
+PROCEDURE clear_window( filltype : INTEGER ) ;
+
+(*-------------------------------------------------------------------*)
+(* Löschen des gesamten Bildschirmes und Definition des selben       *)
+(* als aktuelles Fenster.                                            *)
+(*-------------------------------------------------------------------*)
+PROCEDURE clear_gscreen ;
+
+(*-------------------------------------------------------------------*)
+(* Kopieren des Window Parametersets IN Variablen des Benutzers      *)
+(* Mit Hilfe dieser Procedure kann ein Fenster reaktiviert werden.   *)
+(*-------------------------------------------------------------------*)
+PROCEDURE query_window ( VAR window    : window_type  ;
+                         VAR scale_par : windowpar_type) ;
+
+(*-------------------------------------------------------------------*)
+(*  Reaktivierung eines mit QUERY_WINDOW gesicherten Fensters        *)
+(*-------------------------------------------------------------------*)
+PROCEDURE set_window ( window    : window_type ;
+                       scale_par : windowpar_type ) ;
+
+(*-------------------------------------------------------------------*)
+(* Routinen zu Steuerung eines Graphik-Cursors                       *)
+(*                                                                   *)
+(* MOVE_- Löschen des alten und zeichnen eines neuen Cursors .       *)
+(* INIT_- Initialisieren eines Cursors.                              *)
+(*        Bevor der Cursor benutzt wird muá INIT_CURSOR aufgerufen   *)
+(*        werden .                                                   *)
+(* DEL_-  Löschen des Cursors .                                      *)
+(* CENTER_- Bewegt den Cursor IN die Mitte des aktiven Fensters.     *)
+(* QUERY_-  Abfrage der aktuellen Cursor-Position .                  *)
+(* CURSOR  Function  zur Tastatur gesteuerten Bewegung eines Cursor  *)
+(*         im aktivem Fenster. Folgende Tasten sind erlaubt :        *)
+(*         UP,DOWN,LEFT,RIGHT bewegen den Cursor IN der angegebenen  *)
+(*              Richtung .                                           *)
+(*         PGUP,PGDN Erhöhen bzw. erniedrigen der Geschwindigkeit    *)
+(*         HOME   setzt den Cursor IN die Mitte des Fensters.        *)
+(*         CTRL-END  verlassen der Routine .                         *)
+(*         Die Funktion erhält den Wert TRUE wenn sie mit CTRL-END   *)
+(*         verlassen wurde; Taste erhält den Wert 0 . Wird sie mit   *)
+(*         einem IN VALID_FKTKEYS angegebenen Taste verlassen so ist *)
+(*         der Funktionswert FALSE und IN Taste wird der Tastencode  *)
+(*         übergeben.                                                *)
+(*                                                                   *)
+(*                                                                   *)
+(*-------------------------------------------------------------------*)
+PROCEDURE move_cursor ( x,y : INTEGER ) ;
+
+PROCEDURE init_cursor ( x,y : INTEGER ) ;
+
+PROCEDURE del_cursor ;
+
+PROCEDURE center_cursor ;
+
+PROCEDURE query_cursor ( VAR x,y : INTEGER ) ;
+
+FUNCTION  cursor ( VAR taste         : BYTE  ;
+                       valid_fktkeys : set_of_byte ) : BOOLEAN ;
+
+(*-------------------------------------------------------------------*)
+(* Routine zur Initialisierung der Grafik                            *)
+(*                                                                   *)
+(*  SET_- , QUERY_DEFAULTS setzen bzw. abfrage des default-werte     *)
+(*          für die Proceduren RASTEROP und FILLSTYLE .              *)
+(*          Es empfiehlt sich diese Werte zu definieren, da manche   *)
+(*          Proceduren die Einstellung ändern.  Sie setzen die Ein-  *)
+(*          stellung jedoch auf die durch SET_DEFAULTS gegebenen     *)
+(*          Werte zurück .                                           *)
+(*-------------------------------------------------------------------*)
+PROCEDURE set_defaults ( rast,filltype : INTEGER ) ;
+
+PROCEDURE query_defaults (VAR rast,filltype : INTEGER ) ;
+
+(*-------------------------------------------------------------------*)
+(*  Initialisierung der Graphik. Diese Routine sollte einmal vor     *)
+(*  Aufruf einer beliebigen anderen Procedure des Graphikpaketes     *)
+(*  aufgerufen werden.                                               *)
+(*-------------------------------------------------------------------*)
+PROCEDURE init_grafik ;
+
+(*-------------------------------------------------------------------*)
+(* Bestimmung der Umrechnungsfaktoren von User  - Koordinaten auf    *)
+(* Bildschirm - Koordinaten                                          *)
+(*   xy  Charcter mit Inhalt 'x' oder 'y' ; Sie gibt an ob die       *)
+(*       x- oder die y-Achse skaliert werden soll.                   *)
+(*   min,max   Bereich IN Bildschirmkoordinaten .                    *)
+(*   xmin,xmax Bereich IN Userkoordinaten                            *)
+(*-------------------------------------------------------------------*)
+PROCEDURE scalexy(     xy           : CHAR    ;
+                       min,max      : INTEGER ;
+                       xmin,xmax    : REAL8   ) ;
+
+(*-------------------------------------------------------------------*)
+(* Funktionen zur Umrechnung von User - Koordinaten IN Bildschirm -  *)
+(* Koordinaten.                                                      *)
+(*-------------------------------------------------------------------*)
+FUNCTION xbild( x : REAL8) : INTEGER ;
+
+FUNCTION ybild( y : REAL8 ) : INTEGER ;
+
+PROCEDURE bild_koordinaten ( CONST x,y   : REAL8 ;
+                             VAR   ix,iy : INTEGER) ;
+
+(*-------------------------------------------------------------------*)
+(* Funktionen zur Umrechnung von Bildschirm - IN Userkoordinaten.    *)
+(*-------------------------------------------------------------------*)
+FUNCTION xuser( x : INTEGER ) : REAL8 ;
+
+FUNCTION yuser( y : INTEGER ) : REAL8 ;
+
+PROCEDURE user_koordinaten ( VAR   x,y   : REAL8    ;
+                             CONST ix,iy : INTEGER) ;
+
+(*-------------------------------------------------------------------*)
+(* Zeichnen einer Recheckigen Box mit den Eckpunkten (x1,y1),        *)
+(* (x2,y2 ) .                                                        *)
+(*-------------------------------------------------------------------*)
+PROCEDURE draw_box ( x1,y1,x2,y2 : INTEGER ) ;
+
+(*-------------------------------------------------------------------*)
+(*  Schreiben  eines Textes (S) IN den Graphik-Bildschirm an die     *)
+(*  durch (X,Y) gegebene Position .                                  *)
+(*-------------------------------------------------------------------*)
+PROCEDURE grafik_text (       x,y  : INTEGER  ;
+                        CONST  s   : LSTRING ) ;
+
+(*-------------------------------------------------------------------*)
+(* AXIS : Routine zur Skalierung eines Bildes und Zeichnen           *)
+(* eines beschrifteten Achsenkreuzes :                               *)
+(*  Definition eines Achsen Kreuzes IN dem durch (x11,y11),          *)
+(*  (x12,y12) gegebenen Bildschirm-Fensters. Die Achsen werden       *)
+(*  enstprechen (xmin,xmax) und (ymin,ymax) Skaliert und eine        *)
+(*  Beschriftung IN nx bzw ny Intervallen  durchgeführt.             *)
+(*  HEADER und XHEADER werden als Bild-šberschrift bzw. Unterschrift *)
+(*  IN den Graphen eingetragen. AXIS ruft von sich aus die Routinen  *)
+(*  SCALEXY,DEFINE_WINDOW und CLEAR_WINDOW auf.                      *)
+(*-------------------------------------------------------------------*)
+PROCEDURE axis(       x11,y11,x12,y12,nx,ny : INTEGER ;
+                      xmin,xmax,ymin,ymax   : REAL8   ;
+                CONST header,xheader        : LSTRING ) ;
+
+(*-------------------------------------------------------------------*)
+(* Hilfsroutinen zum zeichnen IN Userkoordinaten                     *)
+(*-------------------------------------------------------------------*)
+PROCEDURE user_plot ( x,y : REAL8 ) ;
+
+PROCEDURE user_lineto ( x,y : REAL8 ) ;
+
+PROCEDURE user_moveto ( x,y : REAL8 ) ;
+
+PROCEDURE user_line ( x1,y1,x2,y2 : REAL8 ) ;
+
+(*-------------------------------------------------------------------*)
+(*  Zeichen der IN XVEK und YVEK gespeicherten Kurve.                *)
+(*  N       Anzahl der zu zeichnenden Punkte .                       *)
+(*  RAST    Art IN der Die Kurve gezeichnet werden soll ( siehe      *)
+(*              Beschreibung RASTEROP )                              *)
+(*  LINEFLAG   TRUE    Zeichnen einer geschlossenen Kurve .          *)
+(*             False   Zeichnen der einzelenen Punkte .              *)
+(*-------------------------------------------------------------------*)
+PROCEDURE plot_vektor(VARS xvek,yvek : real_vektor ;
+                           n,rast    : INTEGER  ;
+                           lineflag  : BOOLEAN ) ;
+
+END ;
