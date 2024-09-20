@@ -1,0 +1,79 @@
+INTERFACE ;
+
+(* Version vom 1.2.1986  *)
+
+UNIT matrix ( matinv,matmult,mavekmult,leasts,matout,eigen,
+	      matrix_matrix,matrix_vektor,eigen_max) ;
+
+CONST eigen_max = 10 ;
+
+TYPE matrix_matrix = SUPER ARRAY [1..*,1..*] OF REAL8 ;
+     matrix_vektor = SUPER ARRAY [1..*] OF REAL8 ;
+
+PROCEDURE matinv ( CONSTS b : matrix_matrix ;
+		   VARS   a : matrix_matrix ;
+			        n : INTEGER	   ;
+		   VARS   d : REAL8    )   ;
+
+		     (*  b   : input matrix	 *)
+		     (*  a   : inverse matrix	 *)
+		     (*  d   : determinate	 *)
+		     (*  n   : ordnung von b,a	 *)
+
+
+PROCEDURE matmult (VARS   matprod   : matrix_matrix ;
+		   CONSTS mat1,mat2 : matrix_matrix ;
+			  sp1,z1,z2 : INTEGER ) ;
+(* Es wird das Produkt matprod = mat1 * mat2 ausgefhrt     *)
+(* mat1 hat den Rang(sp1 x z1 ) und mat2 den Rang (z1 x z2 )*)
+
+
+PROCEDURE mavekmult( CONSTS a	: matrix_matrix ;
+		     CONSTS v	: matrix_vektor ;
+		     VARS   p	: matrix_vektor ;
+			    n,m : INTEGER ) ;
+
+
+PROCEDURE leasts ( CONSTS der	  : matrix_matrix ;
+		   CONSTS dy,yy   : matrix_vektor ;
+			  n,r	  : INTEGER	 ;
+		   VARS   cb	  : matrix_matrix ;
+		   VARS   pp,p	  : matrix_vektor ;
+		   VARs   chi	  : REAL8	 ;
+		   VAR	  ier	  : INTEGER	 ;
+		   VAR	  out	  : TEXT       ) ;
+
+(*    der	Koeffizientenmatrix (n x r )		     *)
+(*    dy,y	Fehler- und Wertevektor (n)		     *)
+(*    n 	Zahl der Messungen			     *)
+(*    r 	Zahl der Parameter			     *)
+(*    cb	Kovarianzmatrix   ( r x r )		     *)
+(*    pp,p	Parametervektor,bzw. korekturen 	     *)
+(*    chi	Chi-Quadrat				     *)
+(*    ier	Fehlercode   = 0  alles o.k.		     *)
+(*			     = 4  Parameterzahl ist Null     *)
+(*			     = 3  Determinate Null	     *)
+(*			     = 1  wenige wie 1 freiheitsgrad *)
+(*    out      Output FILE fr Fehlermeldungen		     *)
+(*	       muá geoeffnet sein			     *)
+
+
+PROCEDURE matout ( CONSTS a	: matrix_matrix ;
+			  m,n	: INTEGER      ;
+			  w,opt : INTEGER      ;
+		   VAR	  out	: TEXT	      ) ;
+
+(*    a  matix vom Rang (mxn) die auf FILE out ausgegeben *)
+(*	 werden soll.					  *)
+(*  m,n  Rang der  matrix a				  *)
+(*   w	 Anzahl der werte pro Zeile			  *)
+(*  opt  1 => Warten wenn Bildschirmseite voll. 	  *)
+(*	 sonst kein Warten				  *)
+(* out	  File OF TEXT					  *)
+
+PROCEDURE eigen ( VARS eigenvek  : matrix_matrix ;
+		  VARS energ_vek : matrix_vektor ;
+		       n	 : INTEGER ) ;
+
+
+END;
