@@ -1,0 +1,54 @@
+Version vom  3.2.1986
+
+PROGRAMM H5 - Fit :
+
+Aus den Frequenzen und dem Magnetfeld eines Hyperfeinüberganges werden
+durch einen Leasts - Square - Fit die Hyperfeinkonstanten A und B be-
+stimmt.
+  In der Ausgabedatei werden zunächst die Eingaben dokumentiert .
+Desweiteren wird der Fortgang der Rechnung dokumentiert und anschließend
+die gefitteten Parameter, deren Fehler, eine Tabelle mit Vergleich der
+Eingabedaten und rückgerechneten Daten	sowie Kovarianz - und
+Korrelationsmatrix ausgegeben.
+
+Benötigte Module :
+		     - Hfssub	( Hfssub.int )
+		     - Matrix	( Matrix.int )
+		     - Main	( h5.pas )
+
+Aufruf des Programmes :
+
+	 H5  <Eingabedatei>  <Ausgabedatei>
+
+
+Format der Eingabedatei :
+
+1te. Zeile	Iterations_max	 Maximal Zahl an Iterationen
+		Kommentar	 lstring(80)
+
+2te. Zeile
+   A		  R	      A - Faktor  (MHz)
+   B		  R	      B _ Faktor  (MHz)
+   gi		  R	      gi in 10e-4
+   gj		  R	      gj
+   I		  R	      Kernspin
+   J		  R	      Hüllendrehimpuls
+
+
+3te. Zeile und folgende enthalten die Daten der Hochfrequenz-Übergänge:
+
+    c		  C	      Steuerzeichen : Blank -> weiter Eingaben
+					      Bel.  -> Ende Datensatz
+			      Dieses Zeichen MUß in der ersten Spalte stehen!!
+
+   F1		  R	      Quantenzahlen des Überganges
+   M1		  R
+   F1		  R
+   M1		  R
+   H		  R	      Magnetfeld in Gauss
+   dH		  R	      Fehler des Magnetfeldes
+   y		  R	      Frequenzwert
+   dy		  R	      Fehler der Frequenz
+
+Es können beliebig viele Datensätze hintereinander eingegeben werden.
+ 
