@@ -200,7 +200,7 @@ VAR i,j,z,k : INTEGER ;
        IF ( z MOD 22 = 0 ) THEN BEGIN
          writeln(output) ; writeln(output) ;
          c := chr(0) ;
-         write(output,'weiter : beliebige Taste drcken ') ;
+         write(output,'weiter : beliebige Taste drücken ') ;
          REPEAT
            read(c) ;
          UNTIL c <> chr(0) ;
