@@ -1,0 +1,39 @@
+Programm fit
+
+Version vom 6.2.86, Horst Roeder 
+
+
+Benötigte Module :
+                     - Matrix   ( Matrix.int )
+                     - Main     ( fit.pas )
+
+Aufruf des Programmes :
+
+         FIT  <Eingabedatei>  <Ausgabedatei>
+
+Format der Eingabedatei :
+
+1te. Zeile      Fittype      Integer im Bereich 0..8
+                             Fittype hat dabei folgende Bedeutung :
+
+                               0            Mittelwert
+                               1            Linearer Fit
+                               2            quadratisches Polynom
+                               3            kubisches Polynom
+                               4            Gausskurve
+                               5            Lorentzkurve
+                               6            Gausskurve mit Untergrund
+                               7            Lorentzkurve mit Untergrund
+                               8            A + B / (x-x0)
+                               9            C + Amp * exp(E*x)
+
+                Kommentar    lstring(80)
+
+2te. zeile und folgende enthalten die Daten .
+    c             C           Steuerzeichen : Blank -> weiter Eingaben
+                                              Bel.  -> Ende Datensatz
+    x             R           X - Wert
+    y             R           Y - Wert
+    dy            R           Fehler von y
+
+Es können beliebig viele Datensätze aufeinander folgen.
