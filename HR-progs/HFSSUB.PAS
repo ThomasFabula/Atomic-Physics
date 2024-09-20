@@ -55,7 +55,7 @@ BEGIN
       END ;
   END ELSE BEGIN
     fakult := 0 ;
-    writeln(output,'Argument von FakultÑt nicht gÅltig n =',n:4) ;
+    writeln(output,'Argument von Fakult√§t nicht g√ºltig n =',n:4) ;
   END ;
 END ;
 (*--------------------------------------------------------------*)
@@ -244,4 +244,3 @@ BEGIN
 END ;
 (*--------------------------------------------------------------*)
 END.
-
