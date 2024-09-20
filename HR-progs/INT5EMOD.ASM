@@ -67,7 +67,7 @@ intin :  STI
 	 CMP	 AL,"1"
 	 JNZ	 l0130
 ;
-; bei "1" ES um 800h erhîhen
+; bei "1" ES um 800h erh√∂hen
 ;
 	 MOV	 BX,ES
 	 ADD	 BX,0800h
@@ -101,8 +101,8 @@ l0148 :  MOV	 DL,LF
 	 MOV	 DL,high lineprn
 	 doscall prnout
 ;
-; CX enthÑlt die Zahl Pixel pro Zeile
-; BX enthÑlt Startadresse des Bilspeichers
+; CX enth√§lt die Zahl Pixel pro Zeile
+; BX enth√§lt Startadresse des Bilspeichers
 ;
 	 MOV	 CX,linescr
 	 MOV	 BX,7E3Ch
@@ -170,4 +170,3 @@ l019f :  MOV	 AX,CS
 scrprn	 endp
 code	 ends
 	 end	 start
-
