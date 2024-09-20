@@ -6,4 +6,3 @@ Interface;
   Procedure OutP(PortNo:Word; Data:Byte);
 
   End;
-
