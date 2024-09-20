@@ -99,4 +99,3 @@ BEGIN
    upperwords ( words,upc_words,max) ;
    change (inp,out,words,upc_words,max) ;
 END .
-
