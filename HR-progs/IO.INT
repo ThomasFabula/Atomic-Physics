@@ -51,7 +51,7 @@ FUNCTION key : INTEGER ;
 
 
 {------------------------------------------------------------------------}
-{  FILL fÅllt den Bildschirmspeicher ab Adresse POS mit dem Character	 }
+{  FILL f√ºllt den Bildschirmspeicher ab Adresse POS mit dem Character	 }
 {  c und dem Attribute ATTR count mal . 		 < Assembler >	 }
 {------------------------------------------------------------------------}
 PROCEDURE fill (  pos	 : WORD ;
@@ -62,7 +62,7 @@ PROCEDURE fill (  pos	 : WORD ;
 {------------------------------------------------------------------------}
 {  FILLSTR Schreibt den String S mit dem Attribute ATTR an die Stelle	 }
 {  POS im Bildschirmspeicher . Es werden LEN Zeichen geschrieben ; Es	 }
-{  erfolgen keinerlei öberprÅfungen !!. Diese Routine Sollte nicht	 }
+{  erfolgen keinerlei √úberpr√ºfungen !!. Diese Routine Sollte nicht	 }
 {  direkt benutzt werden. ES bietet sich die Routine FILLSTRING an	 }
 {						       <Assembler >	 }
 {------------------------------------------------------------------------}
@@ -80,28 +80,28 @@ PROCEDURE beepio ;
 
 {------------------------------------------------------------------------}
 {  Locate  stellt den Cursor auf die durch ROW und COL definierte	 }
-{  Position. GÅltiger Bereich  : ROW [1,25 ]  , COL [1,80]		 }
+{  Position. G√ºltiger Bereich  : ROW [1,25 ]  , COL [1,80]		 }
 {------------------------------------------------------------------------}
 PROCEDURE locate (  row,col : INTEGER ) ;
 
 
 {------------------------------------------------------------------------}
-{  FÅllt den gesamten Bildschirm mit FILLCHAR im Attribute ATTRIBUTE	 }
+{  F√ºllt den gesamten Bildschirm mit FILLCHAR im Attribute ATTRIBUTE	 }
 {------------------------------------------------------------------------}
 PROCEDURE fillscreen(	       fillchar  : CHAR ;
 			       attribute : CHAR  ) ;
 
 
 {------------------------------------------------------------------------}
-{  Lîschen des Bildschirmes						 }
+{  L√∂schen des Bildschirmes						 }
 {------------------------------------------------------------------------}
 PROCEDURE clearscreen ;
 
 
 {------------------------------------------------------------------------}
-{  FÅllen des Feldes beginnend mit (ROW,COL) und der Anzahl COUNT	 }
+{  F√ºllen des Feldes beginnend mit (ROW,COL) und der Anzahl COUNT	 }
 {  mit dem durch FILLCHAR und ATTRIBUTE gegebenen Zeichens. Der Speicher }
-{  wird linear gefÅllt							 }
+{  wird linear gef√ºllt							 }
 {------------------------------------------------------------------------}
 PROCEDURE fillfield (	       row,col	 : INTEGER;
 			       count	 : INTEGER ;
@@ -110,7 +110,7 @@ PROCEDURE fillfield (	       row,col	 : INTEGER;
 
 
 {------------------------------------------------------------------------}
-{ Lîschen der Zeile ROW mit (FILLCHAR,ATTRIBUTE)			 }
+{ L√∂schen der Zeile ROW mit (FILLCHAR,ATTRIBUTE)			 }
 {------------------------------------------------------------------------}
 PROCEDURE fillline (  row		 : INTEGER ;
 		      fillchar,attribute : CHAR )  ;
@@ -119,9 +119,9 @@ PROCEDURE fillline (  row		 : INTEGER ;
 {------------------------------------------------------------------------}
 {  FILLSTR Schreibt den String S mit dem Attribute ATTR an die Stelle	 }
 {  ROW,COL im Bildschirmspeicher. Passt der String nicht in die Zeile	 }
-{  so wird er entsprechend gekÅrzt. Mit LEN wird die Anzahl Buchstaben	 }
-{  die geschrieben werden sollen angegeben. Ist der String kÅrzer als	 }
-{   LEN  so  werden nur LÑnge(S) Zeichen geschrieben			 }
+{  so wird er entsprechend gek√ºrzt. Mit LEN wird die Anzahl Buchstaben	 }
+{  die geschrieben werden sollen angegeben. Ist der String k√ºrzer als	 }
+{   LEN  so  werden nur L√§nge(S) Zeichen geschrieben			 }
 {------------------------------------------------------------------------}
 PROCEDURE fillstring (	       row,col	 : INTEGER ;
 			       len	 : INTEGER ;
@@ -139,7 +139,7 @@ PROCEDURE fillstring (	       row,col	 : INTEGER ;
 {									 }
 { ATTR	 Attribute in dem der Rahmen gezeichnet werden soll .		 }
 {									 }
-{ TOPIC,TOPIC_ATTR  öberschrift und Attribute; Wird zentriert in den	 }
+{ TOPIC,TOPIC_ATTR  ≈°berschrift und Attribute; Wird zentriert in den	 }
 {	    Rahmen geschrieben .					 }
 {									 }
 {------------------------------------------------------------------------}
@@ -153,16 +153,16 @@ PROCEDURE Make_Frame (	 x1,y1,x2,y2	 : INTEGER ;
 {------------------------------------------------------------------------}
 { GET_KEY  wartet auf ein Zeichen von der Tastatur. Der Funktionswert	 }
 { ist TRUE wenn ein erweiterter Code gefunden wurde, ansonsten ist	 }
-{ er False. Der zugehîrige ASCII-Code wird in KEYCODE Åbergeben .	 }
+{ er False. Der zugeh√∂rige ASCII-Code wird in KEYCODE √ºbergeben .	 }
 {------------------------------------------------------------------------}
 FUNCTION getkey (	    VARS keycode : INTEGER )	    : BOOLEAN ;
 
 
 {------------------------------------------------------------------------}
-{ DEFAULT_IOPOINT fÅllt die globale Variable iopoint mit Standardwerten  }
+{ DEFAULT_IOPOINT f√ºllt die globale Variable iopoint mit Standardwerten  }
 {									 }
-{     validchars  : ['a'..'z','A'..'Z','0'..'9','.','\',' ','Ñ','î',     }
-{		     'Å','é','ô','ö',':']                                }
+{     validchars  : ['a'..'z','A'..'Z','0'..'9','.','\',' ','‚Äû','‚Äù',     }
+{		     '¬Å','≈Ω','‚Ñ¢','≈°',':']                                }
 {     validpf	  : [59..68,84..113] ;					 }
 {     validedit   : []							 }
 {     breakenable : false						 }
@@ -179,20 +179,20 @@ PROCEDURE default_iopoint ( VARS iopoint :iorecord ) ;
 
 {------------------------------------------------------------------------}
 {  Holt ein Zeichen von der Tastatur das in einem der in IOPOINT	 }
-{  gegebenen Sets Validchars,Validpf,Validedit enthalten ist; ZusÑtzlich }
-{  mu· durch die zugehîrige XXENABLE Variable das Set freigegeben sein . }
+{  gegebenen Sets Validchars,Validpf,Validedit enthalten ist; Zus√§tzlich }
+{  mu√° durch die zugeh√∂rige XXENABLE Variable das Set freigegeben sein . }
 {  Funktionswert ist TRUE wenn ein Zeichen aus Validchars gefunden wurde;}
 {  ansonsten ist er FALSE . Wird ein nicht erlaubtes Zeichen gefunden so }
-{  erfolgt ein kurzer Ton. BREAK_OCC erhÑlt den WERT True falls bei	 }
-{  unterdrÅckter Unterbrechung ( BREAKENABLE = false ) die Taste BREAK	 }
-{  gedrÅckt wurde.							 }
+{  erfolgt ein kurzer Ton. BREAK_OCC erh√§lt den WERT True falls bei	 }
+{  unterdr√ºckter Unterbrechung ( BREAKENABLE = false ) die Taste BREAK	 }
+{  gedr√ºckt wurde.							 }
 {------------------------------------------------------------------------}
 FUNCTION  getchar (	  VARS charkey	 : CHAR    ;
 			  VARS iopoint	 : iorecord)	  : BOOLEAN ;
 
 
 {------------------------------------------------------------------------}
-{   GET_STRING erlaubt das editieren eines Stringes der LÑnge MAX an	 }
+{   GET_STRING erlaubt das editieren eines Stringes der L‚Äûnge MAX an	 }
 {   Stelle [ROW,COL] . Die Variable IOPOINT.DEFAULT gibt an ob der	 }
 {   Inhalt der Variable SIN als Defaultwert in das Fenster		 }
 {   eingetragen werden soll. Hat IOPOINT.DISPLAY den Wert TRUE so wird	 }
@@ -200,24 +200,24 @@ FUNCTION  getchar (	  VARS charkey	 : CHAR    ;
 {   ATTR gibt das Attribute in der der String SIN geschrieben werden soll}
 {   an . Ist IOPOINT.DISPLAY False so kann in dem Fenster editiert	 }
 {   werden. Mit IOPOINT.FIELDCHAR wird der Untergrund des Editierfeldes  }
-{   bestimmt. Es stehen folgende Editierfunktion zu VerfÅgung:		 }
+{   bestimmt. Es stehen folgende Editierfunktion zu Verf¬Ågung:		 }
 {									 }
 {     HOME	Cursor in die erste Spalte des Feldes			 }
 {     END	Cursor in die letzte Spalte des Feldes			 }
-{     CTRL-END	Lîschen des Feldes					 }
-{     BACKSPACE Lîschen des Zeichens links vom Cursor			 }
-{     DEL	Lîschen des Zeichen unter dem Cursor			 }
-{     INS	Umschaltung zwischen EinfÅge und öberschreib Modus	 }
-{		Im EinfÅgemodus wird der Cursor als Box dargestellt.	 }
+{     CTRL-END	L√∂schen des Feldes					 }
+{     BACKSPACE L√∂schen des Zeichens links vom Cursor			 }
+{     DEL	L√∂schen des Zeichen unter dem Cursor			 }
+{     INS	Umschaltung zwischen Einf√ºge und √úberschreib Modus	 }
+{		Im Einf√ºgemodus wird der Cursor als Box dargestellt.	 }
 {     Pfeil RECHTS,LINKS zum bewegen des Cursors im Eingabefeld.	 }
 {									 }
 {									 }
-{  GET_STRING erhÑlt den Wert TRUE wenn die Eingabe mit CR abgeschlossen }
-{  wurde, sonst FALSE. Die Variable OKIO wird TRUE wenn die LÑnge des	 }
+{  GET_STRING erh√§lt den Wert TRUE wenn die Eingabe mit CR abgeschlossen }
+{  wurde, sonst FALSE. Die Variable OKIO wird TRUE wenn die L√§nge des	 }
 {  eingegebenen Strings im Bereich [min.max] liegt; sonst FALSE.	 }
-{  Falls mit einem gÅltigem PFKEY oder EDITKEY abgeschlossen wurde	 }
+{  Falls mit einem g√ºltigem PFKEY oder EDITKEY abgeschlossen wurde	 }
 {  findet man den Code in den entsprechenden Feldern von IOPOINT.	 }
-{  Das Feld BREAK_OCC ist TRUE wenn BREAK gedrÅckt wurde aber BREAKEN-	 }
+{  Das Feld BREAK_OCC ist TRUE wenn BREAK gedr√ºckt wurde aber BREAKEN-	 }
 {  ABLE den Wert FALSE hatte.						 }
 {									 }
 {------------------------------------------------------------------------}
@@ -231,15 +231,15 @@ FUNCTION  getstring (	       row,col	 : INTEGER    ;
 {------------------------------------------------------------------------}
 { WRITE_LEISTE schreibt eine Informationszeile zur Definition der	 }
 { Funktionstasten in die letzte Zeile des Bildschirmes. Die einzelnen	 }
-{ InformationskÅrzel fÅr die Funktiostasten 1..10 liegen als Array-	 }
-{ elemente in der Variablen LEISTE vor. Es kînnen maximal 6 Buch	 }
+{ Informationsk√ºrzel f√ºr die Funktiostasten 1..10 liegen als Array-	 }
+{ elemente in der Variablen LEISTE vor. Es k√∂nnen maximal 6 Buch-	 }
 { staben pro Taste angegeben werden.					 }
 {------------------------------------------------------------------------}
 PROCEDURE write_leiste( CONSTS leiste : leisten_array) ;
 
 {------------------------------------------------------------------------}
-{ GETREAL funktioniert wie GETSTRING. Der zusÑtzliche Parameter F	 }
-{ Gibt die Anzahl der Nachkommastellen an, wÑhrend MAX die LÑnge der	 }
+{ GETREAL funktioniert wie GETSTRING. Der zus√§tzliche Parameter F	 }
+{ Gibt die Anzahl der Nachkommastellen an, w√§hrend MAX die L√§nge der	 }
 { Zahl angibt.								 }
 {------------------------------------------------------------------------}
 function getreal (	 row,col   : integer ;
@@ -250,4 +250,3 @@ function getreal (	 row,col   : integer ;
 		 VARS	 iop	   : iorecord ) : boolean ;
 
 END ;
-
