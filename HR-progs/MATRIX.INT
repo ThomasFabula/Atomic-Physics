@@ -24,7 +24,7 @@ PROCEDURE matinv ( CONSTS b : matrix_matrix ;
 PROCEDURE matmult (VARS   matprod   : matrix_matrix ;
 		   CONSTS mat1,mat2 : matrix_matrix ;
 			  sp1,z1,z2 : INTEGER ) ;
-(* Es wird das Produkt matprod = mat1 * mat2 ausgefhrt     *)
+(* Es wird das Produkt matprod = mat1 * mat2 ausgeführt     *)
 (* mat1 hat den Rang(sp1 x z1 ) und mat2 den Rang (z1 x z2 )*)
 
 
@@ -54,8 +54,8 @@ PROCEDURE leasts ( CONSTS der	  : matrix_matrix ;
 (*			     = 4  Parameterzahl ist Null     *)
 (*			     = 3  Determinate Null	     *)
 (*			     = 1  wenige wie 1 freiheitsgrad *)
-(*    out      Output FILE fr Fehlermeldungen		     *)
-(*	       muá geoeffnet sein			     *)
+(*    out      Output FILE für Fehlermeldungen		     *)
+(*	       muß geoeffnet sein			     *)
 
 
 PROCEDURE matout ( CONSTS a	: matrix_matrix ;
