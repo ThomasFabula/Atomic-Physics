@@ -46,7 +46,7 @@ BEGIN
    END ELSE get_key := FALSE ;
 END ;
 (*-------------------------------------------------------------------*)
-(* Zeichenen eines Punktes                                           *)
+(* Zeichnen eines Punktes                                            *)
 (*-------------------------------------------------------------------*)
 PROCEDURE plot ;
 BEGIN
@@ -73,7 +73,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Lîschen der Skalierungs - Faktoren des aktuellen Windows          *)
+(* L√∂schen der Skalierungs - Faktoren des aktuellen Windows          *)
 (*-------------------------------------------------------------------*)
 PROCEDURE clear_faktoren ;
 BEGIN
@@ -97,7 +97,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Lîschen des aktuellen Fensters                                    *)
+(* L√∂schen des aktuellen Fensters                                    *)
 (*-------------------------------------------------------------------*)
 PROCEDURE clear_window ;
 BEGIN
@@ -107,7 +107,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Lîschen des gesamten Bildschirmes und Definition des selben       *)
+(* L√∂schen des gesamten Bildschirmes und Definition des selben       *)
 (* als aktuelles Fenster.                                            *)
 (*-------------------------------------------------------------------*)
 PROCEDURE clear_gscreen ;
@@ -117,7 +117,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Procedure zum abfragen des aktuellen Fensters                     *)
+(* Procedure zum Abfragen des aktuellen Fensters                     *)
 (*-------------------------------------------------------------------*)
 PROCEDURE query_window ;
 BEGIN
@@ -305,7 +305,7 @@ END ;
 (*-------------------------------------------------------------------*)
 (* Funktionen zur Umrechnung von User - Koordinaten IN Bildschirm -  *)
 (* Koordinaten                                                       *)
-(* Eine Dieser Proceduren mu· immer aufgerufen werden wenn Punkte    *)
+(* Eine Dieser Proceduren mu√° immer aufgerufen werden wenn Punkte    *)
 (* IN User - Koordinaten gezeichnet werden sollen.                   *)
 (*-------------------------------------------------------------------*)
 FUNCTION xbild ;
@@ -341,7 +341,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Zeichnen einer Recheckigen Box                                    *)
+(* Zeichnen einer Rechteckigen Box                                   *)
 (*-------------------------------------------------------------------*)
 PROCEDURE draw_box ;
 
@@ -361,7 +361,7 @@ BEGIN
 END ;
 
 (*-------------------------------------------------------------------*)
-(* Hilfsroutinen fÅr AXIS                                            *)
+(* Hilfsroutinen f√ºr AXIS                                            *)
 (*-------------------------------------------------------------------*)
 PROCEDURE change( VAR a,b : INTEGER ) ;
  VAR aux : INTEGER ;
@@ -522,4 +522,3 @@ BEGIN
 END ;
 (*-------------------------------------------------------------------*)
 END .
-
