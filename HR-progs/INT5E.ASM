@@ -52,7 +52,7 @@ intin :  STI
          CMP     AL,31h
          JNZ     l0130
 ;
-; bei "1" ES um 800h erhîhen
+; bei "1" ES um 800h erh√∂hen
 ;
          MOV     BX,ES
          ADD     BX,0800h
@@ -95,7 +95,7 @@ l0148 :  MOV     DL,0Ah      ; LF
          MOV     AH,05h
          INT     21h
 ;
-; CX enthÑlt die Zahl Pixel pro Zeile
+; CX enth√§lt die Zahl Pixel pro Zeile
 ; BX Startadresse im Bildspeicher
 ;
          MOV     CX,015Ch
@@ -163,4 +163,3 @@ l019f :  MOV     AX,CS
 scrprn   endp
 code     ends
          end     start
-
