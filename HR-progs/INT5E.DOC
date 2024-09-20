@@ -1,0 +1,14 @@
+M
+Dokumentation für die Routine INT5e.com
+
+Aufruf	:   int5e <return>
+
+Die Routine steht in der Directory  \-grafobj .
+
+Mit diesem Aufruf wird die Routine resident gemacht und überschreibt die
+normale PrtSc - Routine durch eine Routine zum Ausdruck des Grafik-
+bildschirms auf einem Epson kompatiblen Matrixdrucker. Ein Ausdruck wird
+mit der Sequenz <shift> Prtsc	N  gestartet.  N steht dabei für die aus-
+zudruckende Grafikseite, also etweder 0 oder 1 .
+
+ 
