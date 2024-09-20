@@ -1,5 +1,5 @@
 # Atomic-Physics
-Arbeitsgruppe Dr.rer.nat. Stephanus Büttgenbach et al.
+Arbeitsgruppe Priv.-Dozent Dr.rer.nat. Stephanus Büttgenbach et al.
 - Institut für Angewandte Physik, Univ. Bonn, Wegelerstrasse 8 
 
 ## University of Bonn
