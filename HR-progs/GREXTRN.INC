@@ -27,4 +27,3 @@ FUNCTION  QueryCom :integer;                               External ;
 PROCEDURE  InitMouse ( ComID:integer);                     External ;
 PROCEDURE ReadMouse (var x,y,Flags :integer);              External ;
 PROCEDURE StopMouse;                                       External ;
-
