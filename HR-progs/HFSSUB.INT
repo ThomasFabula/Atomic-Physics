@@ -1,0 +1,22 @@
+INTERFACE ;
+
+(* version vom 24.2.86 *)
+
+UNIT hfssub (fakult,sechsj,dreij,zeeman,acasimir,bcasimir) ;
+
+FUNCTION fakult (      n                  :integer) : REAL8 ;
+
+FUNCTION sechsj (      a1,a2,a3,b1,b2,b3  : REAL4 ;
+                 VAR   ier                : INTEGER ) : REAL8 ;
+
+FUNCTION dreij(        a1,a2,a3,p1,p2,p3  : REAL4 ;
+                 VAR   ier                : INTEGER) : REAL8 ;
+
+FUNCTION zeeman(CONST  f1,f2,xi,xj,xm,gj,gi : REAL4) : REAL8 ;
+
+FUNCTION acasimir (CONST f,i,j : REAL4 ) : REAL8 ;
+
+FUNCTION bcasimir (CONST f,i,j : REAL4 ) : REAL8 ;
+
+END;
+
