@@ -1,0 +1,30 @@
+(* grextrn.inc*)
+type image = super array [1..*] of byte ;
+FUNCTION   QueryGrafix :integer;                           External ;
+PROCEDURE  InitGrafix (dMode:integer);                     External ;
+PROCEDURE  GetCmdLine (var Cmdstring: lstring);            External ;
+PROCEDURE  SetDisplay (PgDisplay,PgWrite, PgRead:integer); External ;
+PROCEDURE  ScreenSize (var Xmax,Ymax:integer);             External ;
+PROCEDURE  ViewPort  (Left,Right,Bottom,Top:integer);      External ;
+PROCEDURE  ScreenPort;                                     External ;
+PROCEDURE  RasterOp (wOption:integer  );                   External ;
+PROCEDURE  LineStyle  ( LineType :integer);                External ;
+PROCEDURE  MoveTo (x,y:integer);                           External ;
+PROCEDURE  LineTo (x,y:integer);                           External ;
+PROCEDURE  QueryPosition (var x,y:integer);                External ;
+FUNCTION   QueryX :integer;                                External ;
+FUNCTION   QueryY :integer;                                External ;
+PROCEDURE FillStyle ( FillType : integer);                 External ;
+PROCEDURE FillPort;                                        External ;
+PROCEDURE WrtImage (const BitMap: image;
+                    widthX,heightY :integer);              External ;
+PROCEDURE ReadImage (var   BitMap: image;
+                    widthX,heightY :integer);              External ;
+PROCEDURE WriteGr ( const Textstring :string );            External ;
+PROCEDURE  FontGR( Fontno:integer);                        External ;
+FUNCTION  LengthGr (const Textstring : string):integer;    External ;
+FUNCTION  QueryCom :integer;                               External ;
+PROCEDURE  InitMouse ( ComID:integer);                     External ;
+PROCEDURE ReadMouse (var x,y,Flags :integer);              External ;
+PROCEDURE StopMouse;                                       External ;
+
