@@ -19,4 +19,3 @@ FUNCTION acasimir (CONST f,i,j : REAL4 ) : REAL8 ;
 FUNCTION bcasimir (CONST f,i,j : REAL4 ) : REAL8 ;
 
 END;
-
