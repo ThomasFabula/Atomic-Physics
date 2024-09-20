@@ -1,0 +1,46 @@
+
+<**************************    H 3 H 4   *****************************>
+
+Version vom 27.1.86
+
+Das Programm H3H4 berechnet für gegebene Hfs - Übergänge die Ableitungen
+nach Magnetfeld( H ) , dem A - und dem B - Faktor.
+
+Benötigte Module :  a)    Hfssub.int   ( Unterprogramm )
+                    b)    Matrix.int   ( Unterprogramm )
+                    c)    H3h4.pas     ( Hauptprogramm )
+
+Es müssen folgende Daten eingegeben werden :
+
+Zeile    Format     Variable     Bedeutung
+
+  1       A80       comment      Text zur Kennzeichnug des Datensatzes
+
+  2        R        F1           Quantenzahlen des šberganges
+  2        R        M1
+  2        R        F2
+  2        R        M2
+  2        R        gj           gj - Faktor
+  2        R        gi           gi - Faktor * 10e-4
+  2        R        J            Hüllendrehimpuls
+  2        R        I            Kernspin
+
+  3        R        AA           A - Faktor
+  3        R        DAA          Fehler des A - Faktors
+  3        R        BB           B - Faktor
+  3        R        DBB          Fehler des B - Faktors
+  3        R        H1           untere Magnetfeld - Grenze
+  3        R        H2           obere  Magnetfeld - Grenze
+  3        R        dH           Increment für das Magnetfeld
+
+Es können beliebig viele vollst„ndige Datensätze folgen. Sie werden bis
+End - Of - File erreicht ist abgearbeitet.
+
+Aufruf des Programmes :
+
+    h3h4   Eingabefile   >Ausgabefile
+
+Die Angabe eines Ausgabefiles ist optional. Wird es nicht angegeben
+so erfolgt die Ausgabe auf dem Bildschirm !!.
+
+ 
